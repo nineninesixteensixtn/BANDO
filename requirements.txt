@@ -1,0 +1,6 @@
+pandas
+numpy
+jsonpickle
+statistics
+math
+typing
