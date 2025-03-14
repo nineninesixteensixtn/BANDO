@@ -128,3 +128,49 @@ class Visualiser:
 
             plt.tight_layout()
             plt.show()
+
+    def pnl(self, products = None):
+        '''
+        `data` must be a dataframe
+        `products` must be a list of strings'''
+        data = self.data
+        if products == None:
+            productsdf = data['product'].unique()
+            n = len(productsdf)
+            if n>2:
+                f,a = fa(x = 2, y = (n+1//2), size = (14,((n+1//2))*6))
+                for i in range(n):
+                    sns.lineplot(data = data[data['product'] == productsdf[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i//2, i%2])
+                    a[i//2, i%2].set_title(f'{productsdf[i]}')
+                    a[i//2, i%2].grid()
+            else:
+                
+                f,a = fa(x = n, y = 1, size = (14,((n+1//2))*6))
+                for i in range(n):
+                    sns.lineplot(data = data[data['product'] == productsdf[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i])
+                    a[i].set_title(f'{productsdf[i]}')
+                    a[i].grid()
+
+        else:
+            n = len(products)
+            if n>2:
+                f,a = fa(x = 2, y = (n+1)//2 + 1, size = (14,(n+1//2)*6))
+                for i in range(n):
+                    sns.lineplot(data = data[data['product'] == productsdf[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i//2, i%2])
+                    a[i//2, i%2].set_title(f'{products[i]}')
+                    a[i//2, i%2].grid()
+            elif n == 1:
+                f,a = fa(size = (14,6))
+                sns.lineplot(data = data[data['product'] == products[0]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a)
+                a.set_title(f'{products[0]}')
+                a.grid()
+            elif n == 2:
+                f,a = fa(x = 2, y = 1, size = (14,6))
+                for i in range(2):
+                    sns.lineplot(data = data[data['product'] == products[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i])
+                    a[i].set_title(f'{products[0]}')
+                    a[i].grid()
+
+        return f
+            
+
