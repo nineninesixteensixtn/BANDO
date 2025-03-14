@@ -5,3 +5,6 @@ __pycache__/
 # Ignore MacOS system files
 .DS_Store
 _MACHOSX/
+
+# Ignore Jupyter Notebooks
+*.ipynb
