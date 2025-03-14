@@ -3,7 +3,7 @@
 __pycache__/
 
 # Ignore MacOS system files
-.DS_Store
+.DS_Store/
 _MACHOSX/
 
 #ignore working files
