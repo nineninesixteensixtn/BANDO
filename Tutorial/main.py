@@ -36,14 +36,14 @@ class Trader:
 
         if len(order_depth.sell_orders) > 0:
             best_ask, best_ask_amount = list(order_depth.sell_orders.items())[0]
-            if int(best_ask) <= max_ask:
+            if int(best_ask) < max_ask:
                 print("BUY", str(-best_ask_amount) + "x", best_ask)
                 orders.append(Order('RAINFOREST_RESIN', best_ask, -best_ask_amount))
             result['RAINFOREST_RESIN'] = orders
 
         if len(order_depth.buy_orders) > 0:
             best_bid, best_bid_amount = list(order_depth.buy_orders.items())[0]
-            if int(best_bid) >= min_bid:
+            if int(best_bid) > min_bid:
                 print("BUY", str(-best_bid_amount) + "x", best_bid)
                 orders.append(Order('RAINFOREST_RESIN', best_bid, -best_bid_amount))
             result['RAINFOREST_RESIN'] = orders
