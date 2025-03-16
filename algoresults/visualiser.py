@@ -70,7 +70,7 @@ class Visualiser:
         product_weighted_avg_prices = {}
 
         for product in self.products:
-            product_data = self.data[self.data["product"] == product] 
+            product_data = self.data[self.data["product"] == product].fillna(0) 
 
             weighted_price = sum(product_data[price] * product_data[volume] for price, volume in zip(price_columns, volume_columns))
             total_volume = product_data[volume_columns].sum(axis=1)
@@ -172,5 +172,3 @@ class Visualiser:
                     a[i].grid()
 
         return f
-            
-
