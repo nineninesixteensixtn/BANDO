@@ -42,41 +42,51 @@ class StoikovTrader:
         Main trading function: Processes market data and places trades.
         """
         result = {}
-        for product in state.order_depths:
-            order_depth: OrderDepth = state.order_depths[product]
-            orders: List[Order] = []
+        # for product in state.order_depths:
+        #     order_depth: OrderDepth = state.order_depths[product]
+        #     orders: List[Order] = []
+        #     acceptable_price = 10  # Participant should calculate this value
+        #     print("Acceptable price : " + str(acceptable_price))
+        #     print("Buy Order depth : " + str(len(order_depth.buy_orders)) + ", Sell order depth : " + str(len(order_depth.sell_orders)))
+    
+        #     if len(order_depth.sell_orders) != 0:
+        #         best_ask, best_ask_amount = list(order_depth.sell_orders.items())[0]
+        #         if int(best_ask) < acceptable_price:
+        #             print("BUY", str(-best_ask_amount) + "x", best_ask)
+        #             orders.append(Order(product, best_ask, -best_ask_amount))
+    
+        #     if len(order_depth.buy_orders) != 0:
+        #         best_bid, best_bid_amount = list(order_depth.buy_orders.items())[0]
+        #         if int(best_bid) > acceptable_price:
+        #             print("SELL", str(best_bid_amount) + "x", best_bid)
+        #             orders.append(Order(product, best_bid, -best_bid_amount))
+            
+        # RESIN
+        order_depth = state.order_depths['RAINFOREST_RESIN']
+        orders = []
+        min_bid = 9998
+        max_ask = 10001
 
-            best_bid = max(order_depth.buy_orders.keys(), default=None)
-            best_ask = min(order_depth.sell_orders.keys(), default=None)
+        if len(order_depth.sell_orders) > 0:
+            best_ask, best_ask_amount = list(order_depth.sell_orders.items())[0]
+            if int(best_ask) < max_ask:
+                print("BUY", str(-best_ask_amount) + "x", best_ask)
+                orders.append(Order('RAINFOREST_RESIN', best_ask, -best_ask_amount))
+            result['RAINFOREST_RESIN'] = orders
 
-            if best_bid is None or best_ask is None:
-                continue 
+        if len(order_depth.buy_orders) > 0:
+            best_bid, best_bid_amount = list(order_depth.buy_orders.items())[0]
+            if int(best_bid) > min_bid:
+                print("BUY", str(-best_bid_amount) + "x", best_bid)
+                orders.append(Order('RAINFOREST_RESIN', best_bid, -best_bid_amount))
+            result['RAINFOREST_RESIN'] = orders
 
-            mid_price = (best_bid + best_ask) / 2
-
-            if product not in self.inventory:
-                self.inventory[product] = 0
-
-            sigma = self.volatility.get(product, 0)
-
-            reservation_price, optimal_spread = self.compute_stoikov_prices(
-                mid_price, self.inventory[product], sigma
-            )
-
-            bid_price = reservation_price - optimal_spread / 2
-            ask_price = reservation_price + optimal_spread / 2
-
-            if bid_price > best_bid:
-                orders.append(Order(product, int(bid_price), 10))
-
-            if ask_price < best_ask:
-                orders.append(Order(product, int(ask_price), -10))
-
-            result[product] = orders
-
-            traderData = "SAMPLE"
-            conversions = 0
-
+		    # String value holding Trader state data required. 
+				# It will be delivered as TradingState.traderData on next execution.
+        traderData = "SAMPLE" 
+        
+				# Sample conversion request. Check more details below. 
+        conversions = 1
         return result, conversions, traderData
 
         
