@@ -128,3 +128,5 @@ class Visualiser:
 
             plt.tight_layout()
             plt.show()
+
+Visualiser(r"BANDO\algoresults\fdc69852-9edd-445f-9c9a-f516b3ad5e5c.csv").plot_price()
