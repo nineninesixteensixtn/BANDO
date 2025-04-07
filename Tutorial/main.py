@@ -4,8 +4,12 @@ import string
 
 class Trader:
     def run(self, state: TradingState):
-        print("traderData: " + state.traderData)
-        print("Observations: " + str(state.observations))
+        # print("traderData: " + state.traderData)
+        # print("Observations: " + str(state.observations))
+        print('own_trades',state.own_trades)
+        print('market_trades', state.market_trades)
+        print('position', state.position)
+        print('RESIN quotes', {'buy_orders': state.order_depths['RAINFOREST_RESIN'].buy_orders, 'sell_orders': state.order_depths['RAINFOREST_RESIN'].sell_orders})
 
 				# Orders to be placed on exchange matching engine
         result = {}
@@ -33,7 +37,7 @@ class Trader:
         orders = []
         min_bid = 9998
         max_ask = 10001
-
+        
         if len(order_depth.sell_orders) > 0:
             best_ask, best_ask_amount = list(order_depth.sell_orders.items())[0]
             if int(best_ask) < max_ask:
@@ -44,7 +48,7 @@ class Trader:
         if len(order_depth.buy_orders) > 0:
             best_bid, best_bid_amount = list(order_depth.buy_orders.items())[0]
             if int(best_bid) > min_bid:
-                print("BUY", str(-best_bid_amount) + "x", best_bid)
+                print("SELL", str(-best_bid_amount) + "x", best_bid)
                 orders.append(Order('RAINFOREST_RESIN', best_bid, -best_bid_amount))
             result['RAINFOREST_RESIN'] = orders
 
