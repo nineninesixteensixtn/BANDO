@@ -17,8 +17,8 @@ class Visualiser:
         plots the profit and loss of products given data log
         `products`:list of strings corresponding to products of interest'''
         data = self.data
+        productsdf = data['product'].unique()
         if products == None:
-            productsdf = data['product'].unique()
             n = len(productsdf)
             if n>2:
                 f,a = fa(x = 2, y = (n+1//2), size = (14,((n+1//2))*6))
@@ -38,15 +38,15 @@ class Visualiser:
             n = len(products)
             if n>2:
                 f,a = fa(x = 2, y = (n+1)//2 + 1, size = (14,(n+1//2)*6))
-                for i in products:
-                    sns.lineplot(data = data[data['product'] == productsdf[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i//2, i%2])
-                    a[i//2, i%2].set_title(f'{productsdf[i]}')
+                for i in range(n):
+                    sns.lineplot(data = data[data['product'] == products[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i//2, i%2])
+                    a[i//2, i%2].set_title(f'{products[i]}')
                     a[i//2, i%2].grid()
             else:
                 f,a = fa(x = 2, y = 1, size = (14,6))
                 for i in range(n):
-                    sns.lineplot(data = data[data['product'] == productsdf[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i])
-                    a[i].set_title(f'{productsdf[i]}')
+                    sns.lineplot(data = data[data['product'] == products[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i])
+                    a[i].set_title(f'{products[i]}')
                     a[i].grid()
 
         return f
@@ -70,7 +70,7 @@ class Visualiser:
         product_weighted_avg_prices = {}
 
         for product in self.products:
-            product_data = self.data[self.data["product"] == product] 
+            product_data = self.data[self.data["product"] == product].fillna(0) 
 
             weighted_price = sum(product_data[price] * product_data[volume] for price, volume in zip(price_columns, volume_columns))
             total_volume = product_data[volume_columns].sum(axis=1)
@@ -128,3 +128,49 @@ class Visualiser:
 
             plt.tight_layout()
             plt.show()
+
+    def pnl(self, products = None):
+        '''
+        `data` must be a dataframe
+        `products` must be a list of strings'''
+        data = self.data
+        if products == None:
+            productsdf = data['product'].unique()
+            n = len(productsdf)
+            if n>2:
+                f,a = fa(x = 2, y = (n+1//2), size = (14,((n+1//2))*6))
+                for i in range(n):
+                    sns.lineplot(data = data[data['product'] == productsdf[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i//2, i%2])
+                    a[i//2, i%2].set_title(f'{productsdf[i]}')
+                    a[i//2, i%2].grid()
+            else:
+                
+                f,a = fa(x = n, y = 1, size = (14,((n+1//2))*6))
+                for i in range(n):
+                    sns.lineplot(data = data[data['product'] == productsdf[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i])
+                    a[i].set_title(f'{productsdf[i]}')
+                    a[i].grid()
+
+        else:
+            n = len(products)
+            if n>2:
+                f,a = fa(x = 2, y = (n+1)//2 + 1, size = (14,(n+1//2)*6))
+                for i in range(n):
+                    sns.lineplot(data = data[data['product'] == productsdf[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i//2, i%2])
+                    a[i//2, i%2].set_title(f'{products[i]}')
+                    a[i//2, i%2].grid()
+            elif n == 1:
+                f,a = fa(size = (14,6))
+                sns.lineplot(data = data[data['product'] == products[0]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a)
+                a.set_title(f'{products[0]}')
+                a.grid()
+            elif n == 2:
+                f,a = fa(x = 2, y = 1, size = (14,6))
+                for i in range(2):
+                    sns.lineplot(data = data[data['product'] == products[i]][['timestamp', 'profit_and_loss']], x= 'timestamp', y='profit_and_loss', ax = a[i])
+                    a[i].set_title(f'{products[0]}')
+                    a[i].grid()
+
+        return f
+
+Visualiser(r"BANDO\algoresults\fdc69852-9edd-445f-9c9a-f516b3ad5e5c.csv").plot_price()
