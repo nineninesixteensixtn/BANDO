@@ -1,43 +1,38 @@
-import numpy as np
 import pandas as pd
 
-# Data setup
 data = {
-    "snowballs": {"snowballs": 1, "pizzas": 1.45, "nuggets": 0.52, "seashells": 0.72},
-    "pizzas": {"snowballs": 0.7, "pizzas": 1, "nuggets": 0.31, "seashells": 0.48},
-    "nuggets": {"snowballs": 1.95, "pizzas": 3.1, "nuggets": 1, "seashells": 1.49},
-    "seashells": {"snowballs": 1.34, "pizzas": 1.98, "nuggets": 0.64, "seashells": 1}
+    "Snowballs": {"Snowballs": 1, "Pizza's": 1.45, "Silicon Nuggets": 0.52, "SeaShells": 0.72},
+    "Pizza's": {"Snowballs": 0.7, "Pizza's": 1, "Silicon Nuggets": 0.31, "SeaShells": 0.48},
+    "Silicon Nuggets": {"Snowballs": 1.95, "Pizza's": 3.1, "Silicon Nuggets": 1, "SeaShells": 1.49},
+    "SeaShells": {"Snowballs": 1.34, "Pizza's": 1.98, "Silicon Nuggets": 0.64, "SeaShells": 1}
 }
-df = pd.DataFrame(data)
 
-# Feel free to edit these
+df = pd.DataFrame.from_dict(data, orient="index")
+
 starting_capital = 500
-items = ["snowballs", "pizzas", "nuggets", "seashells"]
-items_count = len(items)
+items = df.index.tolist()
 max_trades = 5
 
-# Global variables don't edit
-best_capital = 0
-best_path = []
-
-# Rules for trade is that you must start and end with seashells and you trade all available capital
-# and maximise profit, 5 trades allowed
-    
-def search(steps: int = 0, path: list = ["seashells"], current_item: str = "seashells", capital: float = 500):
-    global best_capital, best_path
-
+def search(steps, path, current_item, capital):
+    best_capital = 0
+    best_path = None
+    if current_item == "SeaShells" and steps > 0:
+        best_capital = capital
+        best_path = path
     if steps == max_trades:
-        if current_item == "seashells" and capital > best_capital:
-            best_capital = capital
-            best_path = path[:]
-        return
-    
+        return best_capital, best_path
     for next_item in items:
-        new_capital = capital * df.loc[current_item, next_item]
+        new_cap = capital * df.loc[current_item, next_item]
         new_path = path + [next_item]
+        cand_cap, cand_path = search(steps + 1, new_path, next_item, new_cap)
+        if cand_cap > best_capital:
+            best_capital = cand_cap
+            best_path = cand_path
+    return best_capital, best_path
 
-        search(steps=steps + 1, path=new_path, current_item=next_item, capital=new_capital)
-
-search()
-print("Best final capital in seashells:", best_capital)
-print("Best path:", " -> ".join(best_path))
+opt_cap, opt_path = search(0, ["SeaShells"], "SeaShells", starting_capital)
+print("Optimal final capital in SeaShells:", round(opt_cap, 2))
+if opt_path:
+    print("Optimal path:", " -> ".join(opt_path))
+else:
+    print("No valid path found")
